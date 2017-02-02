@@ -17,22 +17,21 @@
 # limitations under the License.
 #
 
-directory File.dirname(node['confluence']['home_path']) do
-  owner 'root'
+user node['confluence']['user'] do
+  comment 'Confluence Service Account'
+  shell '/bin/bash'
+  system true
+  action :create
+end
+
+directory node['confluence']['home_path'] do
+  owner node['confluence']['user']
   group 'root'
-  mode '0755'
+  mode 00755
   action :create
   recursive true
 end
 
-user node['confluence']['user'] do
-  comment 'Confluence Service Account'
-  home node['confluence']['home_path']
-  shell '/bin/bash'
-  supports manage_home: true
-  system true
-  action :create
-end
 
 Chef::Resource::Ark.send(:include, Confluence::Helpers)
 
